@@ -41,9 +41,11 @@ navigator.mediaDevices.getUserMedia({
   })
 })
 
-socket.on('user-disconnected', userId => {
-  if (peers[userId]) peers[userId].close()
-})
+const scrollToBottom = () => {
+  var d = $('.main__chat_window');
+  d.scrollTop(d.prop("scrollHeight"));
+}
+ 
 
 myPeer.on('open', id => {
   socket.emit('join-room', ROOM_ID, id)
@@ -72,12 +74,6 @@ function addVideoStream(video, stream) {
 
 
 
-const scrollToBottom = () => {
-  var d = $('.main__chat_window');
-  d.scrollTop(d.prop("scrollHeight"));
-}
-
-
 const muteUnmute = () => {
   const enabled = myVideoStream.getAudioTracks()[0].enabled;
   if (enabled) {
@@ -99,6 +95,14 @@ const playStop = () => {
     setStopVideo()
     myVideoStream.getVideoTracks()[0].enabled = true;
   }
+}
+
+const leaveMeeting=()=>{
+  socket.emit('disconnect',userId);
+  socket.on('user-disconnected', userId => {
+    if (peers[userId]) peers[userId].close()
+  })
+
 }
 
 const setMuteButton = () => {
